@@ -1,15 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 const isOpen = ref(false);
 
 const closeMenu = () => {
   isOpen.value = false;
 };
+
+const isScrolled = ref(false)
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 20
+}
+
+onMounted(() => {
+  handleScroll()
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
-  <header class="site-header" :class="{ 'menu-open': isOpen }">
+  <header class="site-header" :class="{ 'menu-open': isOpen, 'is-scrolled': isScrolled}">
     <a class="wordmark" href="#top" @click="closeMenu">
       <span>ATELIER</span>
       <span>NORD</span>
@@ -50,6 +65,11 @@ const closeMenu = () => {
   padding: 24px 32px;
   color: var(--ink);
   mix-blend-mode: normal;
+  transition: background-color 0.35s ease,
+}
+
+.is-scrolled {
+  background-color: black;
 }
 
 .wordmark {
